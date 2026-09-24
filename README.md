@@ -29,7 +29,7 @@ It allows customers to explore local restaurants, view menus, manage shopping ca
 - **Database**: SQLite (Local Dev) / PostgreSQL support via `DATABASE_URL` (Production)
 - **Frontend**: HTML5, Custom CSS3
 - **Templates**: Django Template Language (DTL)
-- **Deployment**: Gunicorn, WhiteNoise, `python-dotenv`
+- **Deployment**: Vercel / Render, Gunicorn, WhiteNoise, `python-dotenv`
 
 ---
 
@@ -41,10 +41,14 @@ BiteNest/
 ├── manage.py                   # Django management utility
 ├── seed.py                     # Script to populate sample data
 ├── requirements.txt            # Python dependencies
-├── Procfile                    # Deployment command
+├── vercel.json                 # Vercel serverless configuration
+├── Procfile                    # Render / Heroku deployment command
 ├── .env.example                # Environment variables template
 ├── .gitignore                  # Git ignore settings
 ├── README.md                   # Project documentation
+│
+├── api/                        # Vercel serverless entry point
+│   └── wsgi.py
 │
 ├── meal_buddy/                 # Django project config
 │   ├── settings.py
@@ -149,7 +153,22 @@ BiteNest/
 
 ---
 
-## Deployment (Render)
+## Deployment Options
+
+### Option A: Deploying on Vercel
+
+1. **Push your code to GitHub**.
+2. Go to [Vercel Dashboard](https://vercel.com/dashboard) and click **Add New Project**.
+3. Import your **BiteNest** GitHub repository.
+4. Set Environment Variables in Vercel:
+   - `DJANGO_DEBUG` = `False`
+   - `DJANGO_SECRET_KEY` = `<your-production-secret-key>`
+   - `DATABASE_URL` = `<your-postgresql-url>` *(e.g. from Supabase, Neon, or ElephantSQL for persistent database storage)*
+5. Click **Deploy**. Vercel will automatically detect `vercel.json` and build the application.
+
+---
+
+### Option B: Deploying on Render
 
 1. Push code to GitHub.
 2. Create a new **Web Service** on Render.
