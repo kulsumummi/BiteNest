@@ -17,7 +17,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'bitenest-secure-secret-key-change-i
 
 DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '.vercel.app', '*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -69,8 +69,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'meal_buddy.wsgi.application'
 
-# Database
-# Support PostgreSQL in production via DATABASE_URL, with SQLite fallback for local development
+# Database Setup
+# Detect Vercel environment
+IS_VERCEL = os.getenv('VERCEL') is not None or os.getenv('VERCEL_ENV') is not None
+
 if os.getenv('DATABASE_URL'):
     try:
         import dj_database_url
@@ -81,14 +83,14 @@ if os.getenv('DATABASE_URL'):
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
+                'NAME': '/tmp/db.sqlite3' if IS_VERCEL else BASE_DIR / 'db.sqlite3',
             }
         }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': '/tmp/db.sqlite3' if IS_VERCEL else BASE_DIR / 'db.sqlite3',
         }
     }
 
