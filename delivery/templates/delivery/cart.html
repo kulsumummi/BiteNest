@@ -1,188 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart - Meal Buddy</title>
+{% extends 'delivery/base.html' %}
 
-    {% load static %}
+{% block title %}Your Cart | BiteNest{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        .cart-container {
-            max-width: 1000px;
-            margin: 40px auto;
-        }
-        
-        .cart-header {
-            margin-bottom: 40px;
-        }
-        
-        .cart-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-        }
-        
-        .cart-table-wrapper {
-            background: rgba(255,255,255,0.22);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 28px;
-            padding: 35px;
-            box-shadow: 0 18px 48px rgba(0,0,0,0.14), 0 3px 12px rgba(0,0,0,0.06);
-            margin-bottom: 30px;
-            overflow-x: auto;
-        }
-        
-        .cart-table-wrapper table {
-            width: 100%;
-            margin-top: 0;
-        }
-        
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        
-        .quantity-control a {
-            padding: 6px 12px;
-            font-size: 14px;
-            min-width: auto;
-        }
-        
-        .cart-footer {
-            background: rgba(255,255,255,0.22);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 28px;
-            padding: 35px;
-            box-shadow: 0 18px 48px rgba(0,0,0,0.14), 0 3px 12px rgba(0,0,0,0.06);
-        }
-        
-        .total-price-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 25px;
-        }
-        
-        .total-label {
-            font-size: 18px;
-            font-weight: 600;
-            color: #3a3a3a;
-        }
-        
-        .total-value {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff6b35 0%, #ff8656 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .checkout-btn {
-            width: 100%;
-            padding: 16px 30px;
-            font-size: 16px;
-            background: linear-gradient(135deg, #ff6b35 0%, #ff8656 100%);
-        }
-    </style>
-</head>
+{% block content %}
+  <div style="margin-bottom: 32px;">
+    <h1>Your Shopping Cart</h1>
+    <p>Review your food items and proceed to checkout.</p>
+  </div>
 
-<body>
+  {% if itemList %}
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items: start;">
+      
+      <!-- Cart Items Table -->
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Subtotal</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cart_item in itemList %}
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 14px;">
+                    <img src="{{ cart_item.item.picture }}" alt="{{ cart_item.item.name }}" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80'">
+                    <div>
+                      <strong style="display: block;">{{ cart_item.item.name }}</strong>
+                      <span style="font-size: 0.82rem; color: var(--text-muted);">{{ cart_item.item.restaurant.name }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>₹{{ cart_item.item.price|floatformat:2 }}</td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <a href="{% url 'decrease_quantity' cart_item.id %}" class="btn btn-secondary btn-sm" style="padding: 2px 10px; font-weight: bold;">-</a>
+                    <span style="font-weight: 700; width: 24px; text-align: center;">{{ cart_item.quantity }}</span>
+                    <a href="{% url 'increase_quantity' cart_item.id %}" class="btn btn-secondary btn-sm" style="padding: 2px 10px; font-weight: bold;">+</a>
+                  </div>
+                </td>
+                <td style="font-weight: 700; color: var(--primary);">₹{{ cart_item.subtotal|floatformat:2 }}</td>
+                <td>
+                  <a href="{% url 'remove_item' cart_item.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Remove {{ cart_item.item.name }} from cart?');">Remove</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-    <div class="cart-container">
+      <!-- Order Summary Card -->
+      <div class="card" style="padding: 28px; background-color: var(--bg-cream);">
+        <h3 style="margin-bottom: 20px; border-bottom: 1px solid var(--border-medium); padding-bottom: 12px;">Order Summary</h3>
         
-        <div class="cart-header">
-            <h1>🛒 Your Cart</h1>
-            <p style="color: #2c2c2c; font-size: 15px;">Review your items before checkout</p>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem;">
+          <span>Subtotal</span>
+          <span>₹{{ total_price|floatformat:2 }}</span>
         </div>
-
-        <div class="cart-table-wrapper">
-            <table border="0">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Item</th>
-
-                        <th>Name</th>
-
-                        <th>Price</th>
-
-                        <th>Quantity</th>
-
-                        <th>Subtotal</th>
-
-                        <th>Action</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {% for cart_item in itemList %}
-
-                    <tr>
-
-                        <td style="text-align: center;">
-                            <img src="{{ cart_item.item.picture }}" width="80" style="border-radius: 12px;">
-                        </td>
-
-                        <td>
-                            <strong>{{ cart_item.item.name }}</strong>
-                        </td>
-
-                        <td style="color: #ffb347; font-weight: 700;">
-                            ₹{{ cart_item.item.price }}
-                        </td>
-
-                        <td>
-                            <div class="quantity-control">
-                                <a href="{% url 'decrease_quantity' cart_item.id username %}">−</a>
-                                <span style="min-width: 30px; text-align: center;">{{ cart_item.quantity }}</span>
-                                <a href="{% url 'increase_quantity' cart_item.id username %}">+</a>
-                            </div>
-                        </td>
-
-                        <td style="color: #ffb347; font-weight: 700;">
-                            ₹{{ cart_item.item.price|floatformat:2 }}
-                        </td>
-
-                        <td style="text-align: center;">
-                            <a href="{% url 'remove_item' cart_item.id username %}" style="padding: 8px 16px; font-size: 13px;">
-                                Remove
-                            </a>
-                        </td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-        </div>
-
-        <div class="cart-footer">
-            <div class="total-price-section">
-                <span class="total-label">Total Amount</span>
-                <span class="total-value">₹{{total_price}}</span>
-            </div>
-
-            <form action="{% url 'checkout' username %}">
-                <input type="submit" value="Proceed to Checkout" class="checkout-btn" />
-            </form>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 1rem;">
+          <span>Delivery Fee</span>
+          <span style="color: var(--veg-color); font-weight: 600;">FREE</span>
         </div>
         
+        <div style="display: flex; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border-medium); font-size: 1.3rem; font-weight: 800; color: var(--text-dark);">
+          <span>Total</span>
+          <span style="color: var(--primary);">₹{{ total_price|floatformat:2 }}</span>
+        </div>
+
+        <div style="margin-top: 28px;">
+          <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg" style="width: 100%;">Proceed to Checkout &rarr;</a>
+        </div>
+        <div style="margin-top: 14px; text-align: center;">
+          <a href="{% url 'restaurants' %}" style="font-size: 0.9rem;">+ Add more items</a>
+        </div>
+      </div>
+
     </div>
-
-</body>
-</html>
+  {% else %}
+    <!-- Empty Cart State -->
+    <div class="empty-state">
+      <div class="empty-icon">🛒</div>
+      <h3>Your Cart is Empty</h3>
+      <p>Looks like you haven't added any meals to your cart yet.</p>
+      <a href="{% url 'restaurants' %}" class="btn btn-primary btn-lg">Browse Restaurants & Start Ordering</a>
+    </div>
+  {% endif %}
+{% endblock %}

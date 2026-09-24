@@ -1,142 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <title>Order Confirmation - Meal Buddy</title>
-    {% load static %}
+{% extends 'delivery/base.html' %}
 
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-<style>
-    .success-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 40px;
-        padding: 60px 20px;
-        min-height: 100vh;
-    }
-    
-    .success-card {
-        background: rgba(255,255,255,0.22);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 28px;
-        padding: 50px 40px;
-        max-width: 500px;
-        text-align: center;
-        box-shadow: 0 18px 48px rgba(0,0,0,0.14), 0 3px 12px rgba(0,0,0,0.06);
-        animation: slideUp 0.6s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .success-icon {
-        font-size: 4rem;
-        margin-bottom: 20px;
-        animation: bounce 0.8s ease;
-    }
-    
-    @keyframes bounce {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-    }
-    
-    .success-card h1 {
-        font-size: 2rem;
-        margin-bottom: 15px;
-        background: linear-gradient(135deg, #00c853 0%, #00e676 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .address-section {
-        background: rgba(255,255,255,0.22);
-        border-radius: 16px;
-        padding: 25px;
-        margin: 30px 0;
-        border-left: 4px solid #ff6b35;
-    }
-    
-    .address-section h3 {
-        color: #3a3a3a;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 12px;
-    }
-    
-    .address-section p {
-        color: #2c2c2c;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 1.6;
-    }
-    
-    .success-card p {
-        color: #2c2c2c;
-        font-size: 15px;
-        line-height: 1.6;
-        margin: 15px 0;
-    }
-    
-    .action-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 30px;
-    }
-    
-    .action-buttons a {
-        padding: 14px 30px;
-        font-size: 16px;
-        border-radius: 16px;
-        transition: 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-    
-    .action-buttons a:first-child {
-        background: linear-gradient(135deg, #ff6b35 0%, #ff8656 100%);
-        box-shadow: 0 4px 15px rgba(255,107,53,0.3), 0 1px 3px rgba(0,0,0,0.2);
-    }
-    
-    .action-buttons a:first-child:hover {
-        box-shadow: 0 8px 25px rgba(255,107,53,0.45), 0 2px 5px rgba(0,0,0,0.15);
-    }
-</style>
-</head>
-<body>
-    <div class="success-container">
-        <div class="success-card">
-            <div class="success-icon">✓</div>
-            <h1>Order Placed Successfully!</h1>
-            <p>Thank you for your order, <strong>{{ username }}!</strong></p>
-            
-            <div class="address-section">
-                <h3>📍 Delivery Address</h3>
-                <p>{{ customer.address }}</p>
+{% block title %}My Orders | BiteNest{% endblock %}
+
+{% block content %}
+  <div style="margin-bottom: 32px;">
+    <h1>My Order History</h1>
+    <p>View your past food orders and track delivery statuses.</p>
+  </div>
+
+  {% if orders %}
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      {% for order in orders %}
+        <div class="card" style="padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 14px; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 style="font-size: 1.25rem;">Order #{{ order.id }}</h3>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Placed on {{ order.created_at|date:"d M Y, h:i A" }}</span>
             </div>
-            
-            <p style="color: #c0c0c0; font-size: 14px;">Your food will be prepared and delivered to this address shortly. You'll receive updates on your order status.</p>
-            
-            <div class="action-buttons">
-                {% if cart_items %}
-                    <a href="{% url 'customer_menu' cart_items.0.restaurant.id username %}">Order More Food</a>
-                {% else %}
-                    <a href="/">Back to Home</a>
-                {% endif %}
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <span class="status-badge status-{{ order.status|slugify }}">{{ order.status }}</span>
+              <span style="font-size: 1.3rem; font-weight: 800; color: var(--primary);">₹{{ order.total_amount|floatformat:2 }}</span>
             </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px;">Items</h4>
+            <ul style="list-style: none; padding: 0;">
+              {% for item in order.order_items.all %}
+                <li style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #f0ece3; font-size: 0.95rem;">
+                  <span><strong>{{ item.quantity }}x</strong> {{ item.item_name }}</span>
+                  <span>₹{{ item.subtotal|floatformat:2 }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div style="font-size: 0.88rem; color: var(--text-muted); background-color: var(--bg-cream); padding: 12px; border-radius: var(--radius-sm);">
+            📍 <strong>Delivery Address:</strong> {{ order.delivery_address }} (Ph: {{ order.contact_phone }})
+          </div>
         </div>
+      {% endfor %}
     </div>
-</body>
-</html>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📜</div>
+      <h3>No Past Orders Found</h3>
+      <p>You haven't placed any food orders yet.</p>
+      <a href="{% url 'restaurants' %}" class="btn btn-primary btn-lg">Explore Restaurants & Order Now</a>
+    </div>
+  {% endif %}
+{% endblock %}

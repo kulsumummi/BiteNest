@@ -1,0 +1,44 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}User Profile | BiteNest{% endblock %}
+
+{% block content %}
+  <div style="max-width: 600px; margin: 0 auto;">
+    <div style="margin-bottom: 32px; text-align: center;">
+      <h1>My Account Profile</h1>
+      <p>View your personal BiteNest account details.</p>
+    </div>
+
+    <div class="card" style="padding: 32px;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="width: 80px; height: 80px; border-radius: 50%; background-color: var(--primary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 800; margin: 0 auto 12px;">
+          {{ customer.username|slice:":1"|upper }}
+        </div>
+        <h3>{{ customer.username }}</h3>
+        <span class="diet-badge veg-badge" style="display: inline-block; margin-top: 4px;">{{ customer.role|capfirst }} Account</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+        <div>
+          <label style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Email Address</label>
+          <p style="font-weight: 600; font-size: 1.05rem;">{{ customer.email }}</p>
+        </div>
+
+        <div>
+          <label style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Phone Number</label>
+          <p style="font-weight: 600; font-size: 1.05rem;">{{ customer.mobile|default:"Not specified" }}</p>
+        </div>
+
+        <div>
+          <label style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Default Address</label>
+          <p style="font-weight: 600; font-size: 1.05rem;">{{ customer.address|default:"Not specified" }}</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 32px; display: flex; gap: 12px;">
+        <a href="{% url 'orders' %}" class="btn btn-primary" style="flex: 1;">View My Orders</a>
+        <a href="{% url 'logout' %}" class="btn btn-secondary">Sign Out</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

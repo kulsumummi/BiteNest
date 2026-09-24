@@ -1,0 +1,76 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Admin Dashboard | BiteNest{% endblock %}
+
+{% block content %}
+  <div style="margin-bottom: 32px;">
+    <h1>Admin Control Dashboard</h1>
+    <p>Manage BiteNest restaurants, menus, and customer orders.</p>
+  </div>
+
+  <!-- Platform Stats Grid -->
+  <div class="grid grid-4" style="margin-bottom: 40px;">
+    <div class="card" style="padding: 24px; text-align: center; background-color: var(--bg-cream);">
+      <div style="font-size: 2.2rem; margin-bottom: 6px;">🏪</div>
+      <h3 style="font-size: 2.2rem; color: var(--primary);">{{ restaurant_count }}</h3>
+      <p style="font-weight: 600;">Restaurants</p>
+      <a href="{% url 'admin_restaurants' %}" class="btn btn-outline btn-sm" style="margin-top: 12px;">Manage &rarr;</a>
+    </div>
+
+    <div class="card" style="padding: 24px; text-align: center; background-color: var(--bg-cream);">
+      <div style="font-size: 2.2rem; margin-bottom: 6px;">🍲</div>
+      <h3 style="font-size: 2.2rem; color: var(--primary);">{{ item_count }}</h3>
+      <p style="font-weight: 600;">Menu Items</p>
+      <a href="{% url 'admin_restaurants' %}" class="btn btn-outline btn-sm" style="margin-top: 12px;">Manage Menus &rarr;</a>
+    </div>
+
+    <div class="card" style="padding: 24px; text-align: center; background-color: var(--bg-cream);">
+      <div style="font-size: 2.2rem; margin-bottom: 6px;">👥</div>
+      <h3 style="font-size: 2.2rem; color: var(--primary);">{{ customer_count }}</h3>
+      <p style="font-weight: 600;">Customers</p>
+      <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: 12px;">Registered Users</span>
+    </div>
+
+    <div class="card" style="padding: 24px; text-align: center; background-color: var(--bg-cream);">
+      <div style="font-size: 2.2rem; margin-bottom: 6px;">📦</div>
+      <h3 style="font-size: 2.2rem; color: var(--primary);">{{ order_count }}</h3>
+      <p style="font-weight: 600;">Customer Orders</p>
+      <a href="{% url 'admin_orders' %}" class="btn btn-outline btn-sm" style="margin-top: 12px;">Manage Orders &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Recent Orders Quick Table -->
+  <div class="section-header">
+    <h2>Recent Customer Orders</h2>
+    <a href="{% url 'admin_orders' %}" class="btn btn-secondary btn-sm">View All Orders</a>
+  </div>
+
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in recent_orders %}
+          <tr>
+            <td><strong>#{{ order.id }}</strong></td>
+            <td>{{ order.customer.username }}</td>
+            <td style="font-weight: 700; color: var(--primary);">₹{{ order.total_amount|floatformat:2 }}</td>
+            <td><span class="status-badge status-{{ order.status|slugify }}">{{ order.status }}</span></td>
+            <td>{{ order.created_at|date:"d M Y, h:i A" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 24px;">No customer orders placed yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

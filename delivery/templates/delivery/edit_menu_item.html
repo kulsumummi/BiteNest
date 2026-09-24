@@ -1,0 +1,51 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Edit {{ item.name }} | Admin | BiteNest{% endblock %}
+
+{% block content %}
+  <div class="form-container">
+    <h2 class="form-title">Edit Menu Item</h2>
+    <p class="form-subtitle">Update details for {{ item.name }}</p>
+
+    <form action="{% url 'update_menu_item' item.id %}" method="POST">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="name" class="form-label">Item Name</label>
+        <input type="text" id="name" name="name" class="form-control" value="{{ item.name }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="category" class="form-label">Category</label>
+        <input type="text" id="category" name="category" class="form-control" value="{{ item.category }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="price" class="form-label">Price (INR ₹)</label>
+        <input type="number" step="0.5" min="0" id="price" name="price" class="form-control" value="{{ item.price }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="picture" class="form-label">Image URL</label>
+        <input type="url" id="picture" name="picture" class="form-control" value="{{ item.picture }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="form-label">Dish Description</label>
+        <textarea id="description" name="description" class="form-control" required>{{ item.description }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-check">
+          <input type="checkbox" id="vegeterian" name="vegeterian" {% if item.vegeterian %}checked{% endif %}>
+          <span>🌱 Mark as Vegetarian Dish</span>
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button type="submit" class="btn btn-primary" style="flex: 1;">Update Item</button>
+        <a href="{% url 'admin_menu' item.restaurant.id %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

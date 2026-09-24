@@ -1,0 +1,64 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}{{ restaurant.name }} Menu | BiteNest{% endblock %}
+
+{% block content %}
+  <!-- Restaurant Header Card -->
+  <div class="card" style="margin-bottom: 36px; padding: 28px; background: linear-gradient(135deg, var(--bg-cream) 0%, #ffffff 100%);">
+    <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+      <img src="{{ restaurant.picture }}" alt="{{ restaurant.name }}" style="width: 120px; height: 120px; border-radius: var(--radius-md); object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80'">
+      <div style="flex: 1;">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 6px;">
+          <h1 style="font-size: 2rem;">{{ restaurant.name }}</h1>
+          <span class="rating-badge">★ {{ restaurant.rating }}</span>
+        </div>
+        <p style="font-size: 1rem; color: var(--text-dark); margin-bottom: 6px;"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</p>
+        <p style="color: var(--text-muted);">{{ restaurant.description }}</p>
+      </div>
+      <div>
+        <a href="{% url 'restaurants' %}" class="btn btn-secondary">&larr; Back to Restaurants</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>Menu Items</h2>
+    <span style="font-weight: 600; color: var(--text-muted);">{{ itemList|length }} dishes available</span>
+  </div>
+
+  <!-- Food Menu Grid -->
+  <div class="grid grid-3">
+    {% for item in itemList %}
+      <div class="card">
+        <div class="card-img-wrap">
+          <img src="{{ item.picture }}" alt="{{ item.name }}" class="card-img" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80'">
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <h3 class="card-title">{{ item.name }}</h3>
+            {% if item.vegeterian %}
+              <span class="diet-badge veg-badge">🌱 VEG</span>
+            {% else %}
+              <span class="diet-badge nonveg-badge">🍗 NON-VEG</span>
+            {% endif %}
+          </div>
+          <p class="card-desc">{{ item.description }}</p>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-light);">
+            <div>
+              <span style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">₹{{ item.price|floatformat:2 }}</span>
+            </div>
+            <a href="{% url 'add_to_cart' item.id %}" class="btn btn-primary btn-sm">+ Add to Cart</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-state" style="grid-column: 1 / -1;">
+        <div class="empty-icon">🍲</div>
+        <h3>No Menu Items Available</h3>
+        <p>This restaurant hasn't added any menu items yet.</p>
+        <a href="{% url 'restaurants' %}" class="btn btn-secondary">Explore Other Restaurants</a>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

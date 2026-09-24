@@ -1,92 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Welcome to Meal Buddy - Food Delivery</title>
-    {% load static %}
+{% extends 'delivery/base.html' %}
+{% load static %}
 
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-<style>
-    .welcome-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 40px;
-        padding: 60px 20px;
-    }
-    
-    .welcome-content {
-        background: rgba(255,255,255,0.22);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 28px;
-        padding: 50px 40px;
-        box-shadow: 0 18px 48px rgba(0,0,0,0.14), 0 3px 12px rgba(0,0,0,0.06);
-        max-width: 500px;
-        text-align: center;
-    }
-    
-    .welcome-content h1 {
-        font-size: 3rem;
-        margin-bottom: 20px;
-        background: linear-gradient(135deg, #ff6b35 0%, #ff8656 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .welcome-content p {
-        font-size: 16px;
-        color: #2c2c2c;
-        margin-bottom: 30px;
-        line-height: 1.6;
-    }
-    
-    .button-group {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .button-group a {
-        padding: 16px 32px;
-        font-size: 16px;
-        border-radius: 16px;
-        transition: 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-    
-    .button-group a:first-child {
-        background: linear-gradient(135deg, #ff6b35 0%, #ff8656 100%);
-        box-shadow: 0 4px 15px rgba(255,107,53,0.3), 0 1px 3px rgba(0,0,0,0.2);
-    }
-    
-    .button-group a:first-child:hover {
-        box-shadow: 0 8px 25px rgba(255,107,53,0.45), 0 2px 5px rgba(0,0,0,0.15);
-    }
-    
-    .button-group a:last-child {
-        background: rgba(255,255,255,0.18);
-        border: 1.5px solid rgba(0,0,0,0.12);
-        color: #1f1f1f;
-    }
-    
-    .button-group a:last-child:hover {
-        background: rgba(255,255,255,0.2);
-        border-color: rgba(255,255,255,0.3);
-    }
-</style>
-</head>
-<body>
-    <div class="welcome-container">
-        <div class="welcome-content">
-            <h1>🍔 Meal Buddy</h1>
-            <p>Discover delicious meals from your favorite restaurants, delivered fresh to your door</p>
-            <div class="button-group">
-                <a href="open_signup">Sign Up</a>
-                <a href="open_signin">Sign In</a>
-            </div>
-        </div>
+{% block title %}BiteNest | Good food. Simple ordering.{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Good food. Simple ordering.</h1>
+      <p class="hero-subtitle">Discover your favorite meals from local restaurants and order them with ease.</p>
+      <div class="hero-actions">
+        <a href="{% url 'restaurants' %}" class="btn btn-primary btn-lg">Explore Restaurants</a>
+        {% if not current_user %}
+          <a href="{% url 'signin' %}" class="btn btn-secondary btn-lg">Sign In</a>
+        {% else %}
+          <a href="{% url 'show_cart' %}" class="btn btn-secondary btn-lg">View Cart</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="hero-image-box">
+      <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&auto=format&fit=crop&q=80" alt="Delicious Food Feast">
+    </div>
+  </section>
+
+  <!-- Featured Restaurants Section -->
+  <section style="margin-bottom: 60px;">
+    <div class="section-header">
+      <div>
+        <h2>Featured Restaurants</h2>
+        <p>Handpicked local dining spots ready for quick delivery</p>
+      </div>
+      <a href="{% url 'restaurants' %}" class="btn btn-outline">View All Restaurants &rarr;</a>
     </div>
 
-</body>
-</html>
+    <div class="grid grid-3">
+      {% for restaurant in featured_restaurants %}
+        <div class="card">
+          <div class="card-img-wrap">
+            <img src="{{ restaurant.picture }}" alt="{{ restaurant.name }}" class="card-img" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80'">
+          </div>
+          <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <h3 class="card-title">{{ restaurant.name }}</h3>
+              <span class="rating-badge">★ {{ restaurant.rating }}</span>
+            </div>
+            <p class="card-desc">{{ restaurant.description }}</p>
+            <div class="card-meta">
+              <span>🍽️ {{ restaurant.cuisine }}</span>
+            </div>
+            <a href="{% url 'view_menu' restaurant.id %}" class="btn btn-primary btn-sm" style="width: 100%;">View Menu & Order</a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          <div class="empty-icon">🍽️</div>
+          <h3>No Restaurants Available Yet</h3>
+          <p>Please check back soon or run the database seed script.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Why BiteNest Section -->
+  <section style="margin-bottom: 40px;">
+    <div style="text-align: center; margin-bottom: 32px;">
+      <h2>Why Choose BiteNest?</h2>
+      <p>Built for food lovers who appreciate speed, clarity, and great taste.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Easy Ordering</h3>
+        <p>Browse menus, customize your item quantities, and order in just a few clicks.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🥗</div>
+        <h3>Fresh Choices</h3>
+        <p>Explore a variety of vegetarian and authentic cuisines prepared fresh on order.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Simple Checkout</h3>
+        <p>No complicated forms or payment friction. Pay easily with Cash on Delivery.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Order Tracking</h3>
+        <p>Keep track of your order status from preparation to delivery at your doorstep.</p>
+      </div>
+    </div>
+  </section>
+{% endblock %}

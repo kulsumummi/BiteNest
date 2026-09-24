@@ -1,0 +1,67 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Manage Customer Orders | Admin | BiteNest{% endblock %}
+
+{% block content %}
+  <div class="section-header">
+    <div>
+      <h1>Customer Orders</h1>
+      <p>Track customer orders and update delivery status.</p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+  </div>
+
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>Delivery Details</th>
+          <th>Items Ordered</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td><strong>#{{ order.id }}</strong><br><span style="font-size: 0.78rem; color: var(--text-muted);">{{ order.created_at|date:"d M H:i" }}</span></td>
+            <td><strong>{{ order.customer.username }}</strong></td>
+            <td style="font-size: 0.88rem; max-width: 200px;">
+              {{ order.delivery_address }}<br>
+              <span style="color: var(--text-muted);">Ph: {{ order.contact_phone }}</span>
+            </td>
+            <td style="font-size: 0.88rem;">
+              <ul style="list-style: none; padding: 0;">
+                {% for item in order.order_items.all %}
+                  <li>{{ item.quantity }}x {{ item.item_name }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td style="font-weight: 700; color: var(--primary);">₹{{ order.total_amount|floatformat:2 }}</td>
+            <td>
+              <span class="status-badge status-{{ order.status|slugify }}">{{ order.status }}</span>
+            </td>
+            <td>
+              <form action="{% url 'update_order_status' order.id %}" method="POST" style="display: flex; gap: 6px; align-items: center;">
+                {% csrf_token %}
+                <select name="status" class="form-control" style="padding: 4px 8px; font-size: 0.85rem; width: auto;">
+                  {% for choice in status_choices %}
+                    <option value="{{ choice }}" {% if order.status == choice %}selected{% endif %}>{{ choice }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 32px;">No customer orders placed yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}About Us | BiteNest{% endblock %}
+
+{% block content %}
+  <div style="max-width: 800px; margin: 0 auto; padding: 20px 0;">
+    <h1 style="text-align: center; margin-bottom: 16px;">About BiteNest</h1>
+    <p style="text-align: center; font-size: 1.15rem; margin-bottom: 40px; color: var(--text-muted);">
+      Online Food Ordering Platform designed for speed, simplicity, and great dining experiences.
+    </p>
+
+    <div class="card" style="padding: 36px; margin-bottom: 32px;">
+      <h2 style="margin-bottom: 16px; color: var(--primary);">Our Mission</h2>
+      <p style="margin-bottom: 20px; font-size: 1.05rem;">
+        BiteNest was built with a simple goal: to connect hungry customers with local restaurants through a seamless, hassle-free online ordering experience.
+      </p>
+
+      <h3 style="margin-bottom: 12px;">Key Highlights</h3>
+      <ul style="margin-left: 24px; margin-bottom: 24px; color: var(--text-muted); line-height: 1.8;">
+        <li>Clean, intuitive food ordering interface with instant search and category filters.</li>
+        <li>Transparent order tracking from Pending to Delivered status.</li>
+        <li>Hassle-free demo checkout with Cash on Delivery options.</li>
+        <li>Dedicated admin dashboard for restaurant owners and platform managers.</li>
+      </ul>
+
+      <h3 style="margin-bottom: 12px;">Technology Stack</h3>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Built using <strong>Python, Django, SQL (SQLite / PostgreSQL), HTML5, and CSS3</strong> without unnecessary heavy dependencies or complex JavaScript frameworks.
+      </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 32px;">
+      <a href="{% url 'restaurants' %}" class="btn btn-primary btn-lg">Browse Restaurants Now</a>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BiteNest | Online Food Ordering Platform{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍔</text></svg>">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="{% url 'index' %}" class="brand-logo">
+        🍔 Bite<span>Nest</span>
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+          <li><a href="{% url 'restaurants' %}" class="nav-link">Restaurants</a></li>
+          <li><a href="{% url 'about' %}" class="nav-link">About Us</a></li>
+          {% if is_admin %}
+            <li><a href="{% url 'admin_dashboard' %}" class="nav-link">Admin Dashboard</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        {% if current_user %}
+          <a href="{% url 'show_cart' %}" class="btn btn-secondary btn-sm">
+            🛒 Cart
+            {% if cart_count > 0 %}
+              <span class="cart-badge">{{ cart_count }}</span>
+            {% endif %}
+          </a>
+          <a href="{% url 'orders' %}" class="btn btn-outline btn-sm">My Orders</a>
+          <a href="{% url 'logout' %}" class="btn btn-secondary btn-sm">Sign Out</a>
+        {% else %}
+          <a href="{% url 'signin' %}" class="btn btn-secondary btn-sm">Sign In</a>
+          <a href="{% url 'signup' %}" class="btn btn-primary btn-sm">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Django Messages & Alerts -->
+      {% if messages %}
+        <div class="alert-container">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if error %}
+        <div class="alert-container">
+          <div class="alert alert-error">
+            <span>{{ error }}</span>
+          </div>
+        </div>
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>🍔 BiteNest</h3>
+          <p>Online Food Ordering Platform delivering fresh, delicious meals from local favorites straight to your doorstep.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'restaurants' %}">Browse Restaurants</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'signin' %}">Customer Sign In</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Admin Portal</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'signin' %}">Admin Login</a></li>
+            {% if is_admin %}
+              <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+              <li><a href="{% url 'admin_restaurants' %}">Manage Restaurants</a></li>
+              <li><a href="{% url 'admin_orders' %}">Customer Orders</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 BiteNest. Developed by <strong>Ummi Kulsum</strong>. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

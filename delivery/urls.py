@@ -1,33 +1,38 @@
 from django.urls import path
 from . import views
+
 urlpatterns = [
-    path('', views.index),
-    path('open_signin', views.open_signin, name='open_signin'),
-    path('open_signup', views.open_signup, name='open_signup'),
-    path('signup', views.signup, name='signup'),
-    path('signin', views.signin, name='signin'),
-    path('open_add_restaurant', views.open_add_restaurant, name='open_add_restaurant'), 
-    path('add_restaurant', views.add_restaurant, name='add_restaurant'),
-    path('open_show_restaurant', views.open_show_restaurant, name='open_show_restaurant'), 
-    path('open_update_restaurant/<int:restaurant_id>', views.open_update_restaurant, name='open_update_restaurant'), 
-    path('update_restaurant/<int:restaurant_id>', views.update_restaurant, name='update_restaurant'), 
-    path('delete_restaurant/<int:restaurant_id>', views.delete_restaurant, name='delete_restaurant'), 
-    path('open_update_menu/<int:restaurant_id>', views.open_update_menu, name='open_update_menu'), 
-    path('update_menu/<int:restaurant_id>', views.update_menu, name='update_menu'),
-    path('view_menu/<int:restaurant_id>/<str:username>', views.view_menu, name='view_menu'), 
+    # Public & Auth
+    path('', views.index, name='index'),
+    path('about/', views.about, name='about'),
+    path('signin/', views.signin, name='signin'),
+    path('signup/', views.signup, name='signup'),
+    path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile, name='profile'),
 
-    path('add_to_cart/<int:item_id>/<str:username>', views.add_to_cart, name='add_to_cart'),
-     
-    path('increase_quantity/<int:cart_item_id>/<str:username>', views.increase_quantity, name='increase_quantity'),
+    # Customer
+    path('restaurants/', views.restaurants, name='restaurants'),
+    path('menu/<int:restaurant_id>/', views.view_menu, name='view_menu'),
+    path('cart/', views.show_cart, name='show_cart'),
+    path('cart/add/<int:item_id>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/increase/<int:cart_item_id>/', views.increase_quantity, name='increase_quantity'),
+    path('cart/decrease/<int:cart_item_id>/', views.decrease_quantity, name='decrease_quantity'),
+    path('cart/remove/<int:cart_item_id>/', views.remove_item, name='remove_item'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('place_order/', views.place_order, name='place_order'),
+    path('order_confirmation/<int:order_id>/', views.order_confirmation, name='order_confirmation'),
+    path('orders/', views.orders, name='orders'),
 
-    path('decrease_quantity/<int:cart_item_id>/<str:username>', views.decrease_quantity, name='decrease_quantity'),
-
-    path('remove_item/<int:cart_item_id>/<str:username>', views.remove_item, name='remove_item'), 
-    path('show_cart/<str:username>', views.show_cart, name='show_cart'), 
-
-    path('checkout/<str:username>/', views.checkout, name='checkout'),
-
-    path('orders/<str:username>/', views.orders, name='orders'),
+    # Admin
+    path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-panel/restaurants/', views.admin_restaurants, name='admin_restaurants'),
+    path('admin-panel/restaurants/add/', views.add_restaurant, name='add_restaurant'),
+    path('admin-panel/restaurants/edit/<int:restaurant_id>/', views.update_restaurant, name='update_restaurant'),
+    path('admin-panel/restaurants/delete/<int:restaurant_id>/', views.delete_restaurant, name='delete_restaurant'),
+    path('admin-panel/menu/<int:restaurant_id>/', views.admin_menu, name='admin_menu'),
+    path('admin-panel/menu/add/<int:restaurant_id>/', views.add_menu_item, name='add_menu_item'),
+    path('admin-panel/menu/edit/<int:item_id>/', views.update_menu_item, name='update_menu_item'),
+    path('admin-panel/menu/delete/<int:item_id>/', views.delete_menu_item, name='delete_menu_item'),
+    path('admin-panel/orders/', views.admin_orders, name='admin_orders'),
+    path('admin-panel/orders/update_status/<int:order_id>/', views.update_order_status, name='update_order_status'),
 ]
-
-

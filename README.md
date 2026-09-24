@@ -1,69 +1,115 @@
-# Meal Buddy - Food Delivery App
+# BiteNest - Online Food Ordering Platform
 
-A Django-based food delivery application with admin restaurant management and customer ordering with Razorpay payment integration.
+BiteNest is a simple, responsive, full-stack food ordering web application built using **Python, Django, SQL, HTML5, and CSS3**.
+
+It allows customers to explore local restaurants, view menus, manage shopping carts, place demo Cash on Delivery orders, and track order statuses. It also includes an admin dashboard for managing restaurants, food items, and customer orders.
+
+---
 
 ## Features
 
-- **Customer Management**
-  - User registration and authentication
-  - Browse restaurants and menus
-  - Add items to cart and adjust quantities
-  - Checkout with Razorpay payment integration
-  - Order tracking
+### Customer Features
+- **Account Management**: Register, sign in, profile view, and logout with secure password hashing.
+- **Browse Restaurants**: Search and explore restaurants by name, cuisine, or keyword.
+- **Restaurant Menus**: View dishes with prices, descriptions, and dietary badges (`🌱 VEG` / `🍗 NON-VEG`).
+- **Cart Management**: Add items to cart, adjust quantities (+/-), and remove items.
+- **Checkout & Orders**: Place demo Cash on Delivery orders and track order history (`Pending`, `Preparing`, `Out for Delivery`, `Delivered`).
 
-- **Admin Features**
-  - Add, update, and delete restaurants
-  - Manage restaurant menus
-  - Add items with descriptions, prices, and dietary info
+### Admin Features
+- **Dashboard**: View platform statistics (total restaurants, menu items, registered customers, orders).
+- **Restaurant Management**: Add, edit, and delete restaurants.
+- **Menu Management**: Add, edit, and delete menu items per restaurant.
+- **Order Management**: View customer orders and update delivery status.
 
-- **Payment Integration**
-  - Razorpay payment gateway integration
-  - Secure order checkout
+---
 
 ## Tech Stack
 
-- **Backend**: Django 5.2.5
-- **Database**: SQLite (development) / PostgreSQL (production recommended)
-- **Payment**: Razorpay
-- **Frontend**: Django templates with HTML/CSS
+- **Backend**: Python, Django 5.x
+- **Database**: SQLite (Local Dev) / PostgreSQL support via `DATABASE_URL` (Production)
+- **Frontend**: HTML5, Custom CSS3
+- **Templates**: Django Template Language (DTL)
+- **Deployment**: Gunicorn, WhiteNoise, `python-dotenv`
+
+---
 
 ## Project Structure
 
 ```
-FinalMealmate/
-├── delivery/                  # Main app
-│   ├── migrations/           # Database migrations
-│   ├── static/css/           # CSS files
-│   ├── templates/delivery/   # HTML templates
-│   ├── models.py             # Database models
-│   ├── views.py              # View logic
-│   └── urls.py               # URL routing
-├── meal_buddy/               # Project configuration
-│   ├── settings.py           # Django settings
-│   ├── urls.py               # Main URL config
-│   ├── wsgi.py              # Production WSGI
-│   └── asgi.py              # Production ASGI
-├── manage.py                # Django management
-└── requirements.txt         # Python dependencies
+BiteNest/
+│
+├── manage.py                   # Django management utility
+├── seed.py                     # Script to populate sample data
+├── requirements.txt            # Python dependencies
+├── Procfile                    # Deployment command
+├── .env.example                # Environment variables template
+├── .gitignore                  # Git ignore settings
+├── README.md                   # Project documentation
+│
+├── meal_buddy/                 # Django project config
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+│
+└── delivery/                   # Main app
+    ├── models.py               # Customer, Restaurant, Item, Cart, Order models
+    ├── views.py                # App view handlers
+    ├── urls.py                 # Route definitions
+    ├── admin.py                # Admin panel setup
+    ├── static/css/style.css    # Custom BiteNest CSS styles
+    └── templates/delivery/     # HTML templates
+        ├── base.html
+        ├── index.html
+        ├── about.html
+        ├── signin.html
+        ├── signup.html
+        ├── restaurants.html
+        ├── menu.html
+        ├── cart.html
+        ├── checkout.html
+        ├── order_confirmation.html
+        ├── orders.html
+        ├── profile.html
+        ├── admin_dashboard.html
+        ├── admin_restaurants.html
+        ├── add_restaurant.html
+        ├── update_restaurant.html
+        ├── admin_menu.html
+        ├── add_menu_item.html
+        ├── edit_menu_item.html
+        └── admin_orders.html
 ```
 
-## Installation
+---
 
-### Local Development Setup
+## Database Schema Overview
+
+- **Customer**: `id`, `username`, `password` (hashed), `email`, `mobile`, `address`, `role`, `created_at`
+- **Restaurant**: `id`, `name`, `description`, `cuisine`, `rating`, `picture`, `created_at`
+- **Item**: `id`, `restaurant_id`, `name`, `description`, `price`, `category`, `vegeterian`, `picture`
+- **Cart**: `id`, `customer_id`
+- **CartItem**: `id`, `item_id`, `quantity`
+- **Order**: `id`, `customer_id`, `total_amount`, `status`, `delivery_address`, `contact_phone`, `created_at`
+- **OrderItem**: `id`, `order_id`, `item_id`, `item_name`, `quantity`, `price`
+
+---
+
+## Installation & Setup
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/kulsumummi/meal-Buddy-app.git
-   cd meal-Buddy-app
+   git clone https://github.com/kulsumummi/BiteNest.git
+   cd BiteNest
    ```
 
 2. **Create and activate virtual environment**
    ```bash
-   # Windows
+   # Windows:
    python -m venv venv
    venv\Scripts\activate
 
-   # macOS/Linux
+   # macOS/Linux:
    python3 -m venv venv
    source venv/bin/activate
    ```
@@ -73,184 +119,68 @@ FinalMealmate/
    pip install -r requirements.txt
    ```
 
-4. **Run migrations**
+4. **Set environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+
+5. **Run database migrations**
    ```bash
    python manage.py migrate
    ```
 
-5. **Create superuser (optional, for admin)**
+6. **Seed sample data**
    ```bash
-   python manage.py createsuperuser
+   python seed.py
    ```
 
-6. **Start development server**
+7. **Run development server**
    ```bash
    python manage.py runserver
    ```
-
-   Access the app at: `http://127.0.0.1:8000/`
-
-## Configuration
-
-### Development vs Production
-
-**Important**: The current settings are configured for development only.
-
-#### For Production Deployment:
-
-1. **Update `meal_buddy/settings.py`**:
-   ```python
-   DEBUG = False  # Turn off debug mode
-   ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
-   SECRET_KEY = 'your-secure-random-key-here'
-   ```
-
-2. **Set environment variables** (recommended for sensitive data):
-   ```bash
-   export DJANGO_SECRET_KEY='your-secret-key'
-   export RAZORPAY_KEY_ID='your-razorpay-key'
-   export RAZORPAY_KEY_SECRET='your-razorpay-secret'
-   export DEBUG='False'
-   export ALLOWED_HOSTS='yourdomain.com,www.yourdomain.com'
-   ```
-
-3. **Collect static files**:
-   ```bash
-   python manage.py collectstatic --no-input
-   ```
-
-4. **Run migrations on production**:
-   ```bash
-   python manage.py migrate
-   ```
-
-5. **Use a production WSGI server** (not Django's runserver):
-   - Gunicorn
-   - uWSGI
-   - Waitress
-
-## Razorpay Setup
-
-1. Get your Razorpay API keys from [Razorpay Dashboard](https://dashboard.razorpay.com/)
-
-2. Add them to `meal_buddy/settings.py`:
-   ```python
-   RAZORPAY_KEY_ID = 'your_razorpay_key_id'
-   RAZORPAY_KEY_SECRET = 'your_razorpay_key_secret'
-   ```
-
-   Or set as environment variables for production.
-
-## Database Models
-
-### Customer
-- username
-- password (stored in plain text - consider hashing for production)
-- email
-- mobile
-- address
-
-### Restaurant
-- name
-- picture (URL)
-- cuisine
-- rating
-
-### Item
-- restaurant (ForeignKey)
-- name
-- description
-- price
-- vegetarian (boolean)
-- picture (URL)
-
-### Cart & CartItem
-- Customer has one Cart
-- Cart contains multiple CartItems
-- CartItem has quantity tracking
-
-## API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Home page |
-| `/open_signin` | GET | Sign in page |
-| `/open_signup` | GET | Sign up page |
-| `/signup` | POST | Create new customer |
-| `/signin` | POST | Customer login |
-| `/open_show_restaurant` | GET | Browse restaurants |
-| `/view_menu/<id>/<username>` | GET | View restaurant menu |
-| `/add_to_cart/<item_id>/<username>` | GET | Add item to cart |
-| `/show_cart/<username>` | GET | View cart |
-| `/checkout/<username>/` | GET | Checkout page |
-| `/orders/<username>/` | GET | View orders |
-
-## Default Test Accounts
-
-### Admin
-- **Username**: `admin`
-- **Password**: (any password, admin login just checks username)
-
-## Deployment Checklist
-
-Before deploying to production:
-
-- [ ] Set `DEBUG = False` in settings
-- [ ] Configure `ALLOWED_HOSTS` with your domain
-- [ ] Generate a secure `SECRET_KEY`
-- [ ] Set up Razorpay credentials
-- [ ] Run `collectstatic` command
-- [ ] Set up a production database (PostgreSQL recommended)
-- [ ] Use a production WSGI server (Gunicorn, uWSGI)
-- [ ] Set up SSL/HTTPS
-- [ ] Configure CSRF_TRUSTED_ORIGINS for your domain
-- [ ] Set up proper logging and error tracking
-- [ ] Consider hashing passwords in the Customer model (currently stored plain)
-
-## Common Issues
-
-### Static Files Not Loading
-- Run: `python manage.py collectstatic --no-input`
-- Ensure `STATIC_URL` and `STATIC_ROOT` are properly configured
-- Verify web server is configured to serve static files
-
-### 404 Errors
-- Verify templates exist in `delivery/templates/delivery/`
-- Check URL configuration in `delivery/urls.py`
-- Ensure all view functions are defined in `views.py`
-
-### Database Errors
-- Ensure migrations are applied: `python manage.py migrate`
-- Check database file permissions
-- For production, consider using PostgreSQL
-
-## Security Notes
-
-⚠️ **Current Security Limitations** (for development/learning only):
-- Passwords stored in plain text (use Django's auth system for production)
-- No HTTPS enforcement
-- Secret key is visible in settings
-- Limited input validation
-
-For production use, consider:
-- Using Django's built-in User authentication
-- Implementing proper password hashing
-- Adding comprehensive input validation
-- Setting up SSL/TLS certificates
-- Using environment variables for secrets
-
-## Contributing
-
-Feel free to fork and submit pull requests.
-
-## License
-
-This project is provided as-is for educational purposes.
-
-## Support
-
-For issues or questions, please open an issue in the GitHub repository.
+   Open `http://127.0.0.1:8000/` in your browser.
 
 ---
 
-**Happy ordering! 🍔🍕🍜**
+## Demo Credentials
+
+- **Admin Account**: Username: `admin` | Password: `admin123`
+- **Customer Account**: Username: `john_doe` | Password: `user123`
+
+---
+
+## Deployment (Render)
+
+1. Push code to GitHub.
+2. Create a new **Web Service** on Render.
+3. Build Command: `pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate && python seed.py`
+4. Start Command: `gunicorn meal_buddy.wsgi:application`
+5. Set Environment Variables:
+   - `DJANGO_DEBUG` = `False`
+   - `DJANGO_SECRET_KEY` = `<your-production-secret-key>`
+   - `DJANGO_ALLOWED_HOSTS` = `.onrender.com`
+   - `DATABASE_URL` = `<your-postgresql-url>`
+
+---
+
+## Future Improvements
+
+- Digital online payment integration (Stripe / Razorpay)
+- Customer ratings and reviews for restaurants
+- Live map tracking for delivery drivers
+
+---
+
+## Author
+
+**Ummi Kulsum**
+
+---
+
+## Resume Description
+
+**BiteNest – Online Food Ordering Platform**
+* Developed a full-stack food ordering web application using Python, Django, SQL, HTML5, and CSS3.
+* Implemented customer authentication, restaurant/menu management, shopping cart, checkout, and order tracking.
+* Designed a relational database schema for users, restaurants, menu items, carts, and persistent order histories.
+* Built a responsive, accessible user interface and prepared the application for production deployment.

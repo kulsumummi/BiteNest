@@ -1,0 +1,54 @@
+{% extends 'delivery/base.html' %}
+
+{% block title %}Manage Restaurants | Admin | BiteNest{% endblock %}
+
+{% block content %}
+  <div class="section-header">
+    <div>
+      <h1>Manage Restaurants</h1>
+      <p>Add, edit, or remove restaurants from BiteNest.</p>
+    </div>
+    <a href="{% url 'add_restaurant' %}" class="btn btn-primary">+ Add New Restaurant</a>
+  </div>
+
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Restaurant</th>
+          <th>Cuisine</th>
+          <th>Rating</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for restaurant in restaurantList %}
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <img src="{{ restaurant.picture }}" alt="{{ restaurant.name }}" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80'">
+                <div>
+                  <strong style="display: block;">{{ restaurant.name }}</strong>
+                  <span style="font-size: 0.82rem; color: var(--text-muted);">{{ restaurant.description|truncatewords:8 }}</span>
+                </div>
+              </div>
+            </td>
+            <td>{{ restaurant.cuisine }}</td>
+            <td><span class="rating-badge">★ {{ restaurant.rating }}</span></td>
+            <td>
+              <div style="display: flex; gap: 8px;">
+                <a href="{% url 'admin_menu' restaurant.id %}" class="btn btn-secondary btn-sm">Menu Items</a>
+                <a href="{% url 'update_restaurant' restaurant.id %}" class="btn btn-outline btn-sm">Edit</a>
+                <a href="{% url 'delete_restaurant' restaurant.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Delete {{ restaurant.name }}? This will remove all associated menu items.');">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 32px;">No restaurants found. Click "+ Add New Restaurant" to get started.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
