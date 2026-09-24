@@ -174,13 +174,3 @@ BiteNest/
 ## Author
 
 **Ummi Kulsum**
-
----
-
-## Resume Description
-
-**BiteNest – Online Food Ordering Platform**
-* Developed a full-stack food ordering web application using Python, Django, SQL, HTML5, and CSS3.
-* Implemented customer authentication, restaurant/menu management, shopping cart, checkout, and order tracking.
-* Designed a relational database schema for users, restaurants, menu items, carts, and persistent order histories.
-* Built a responsive, accessible user interface and prepared the application for production deployment.
